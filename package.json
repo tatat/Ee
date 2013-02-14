@@ -1,0 +1,14 @@
+{
+  "name": "Ee",
+  "version": "0.0.1",
+  "dependencies": {
+    "mocha": "*",
+    "sinon": "*",
+    "chai": "*",
+    "sinon-chai": "*"
+  },
+  "scripts": {
+    "test": "make test",
+    "test-watch": "make test-watch"
+  }
+}
