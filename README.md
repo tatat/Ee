@@ -202,7 +202,37 @@ console.log('◡( ╹◡╹ )◡');
     nyan!
     complete!
 
+#### ee.parallel(event, [arguments], [complete], [hook]) -> ee
+#### ee.parallel(event, [complete], [hook]) -> ee
 
+```js
+ee.on('nyan', function(e) {
+  setTimeout(function() {
+    e.set('data 1', 'listener 1');
+    e.complete(); // must be called
+  }, (Math.floor(Math.random() * 10) + 1) * 1000);
+}).on('nyan', function(e) {
+  setTimeout(function() {
+    e.set('data 2', 'listener 2');
+    e.complete(); // must be called
+  }, (Math.floor(Math.random() * 10) + 1) * 1000);
+}).on('nyan', function(e) {
+  setTimeout(function() {
+    e.set('data 3', 'listener 3');
+    e.complete(); // must be called
+  }, (Math.floor(Math.random() * 10) + 1) * 1000);
+});
+
+ee.parallel('nyan', function(e) {
+  console.log(e.get('data 1'));
+  console.log(e.get('data 2'));
+  console.log(e.get('data 3'));
+});
+```
+
+    listener 1
+    listener 2
+    listener 3
 
 ### Ee.Event
 
