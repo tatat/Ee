@@ -464,6 +464,83 @@ describe('Ee', function() {
     });
   });
 
+  describe('#parallel', function() {
+    var object;
+
+    beforeEach(function() {
+      object = new Ee();
+    });
+
+
+    it('should call all listeners and data have been set', function(done) {
+      var i = 0;
+
+      var complete = function(e) {
+        var timeout = 100 * ++ i;
+        e.set(timeout, timeout);
+        e.complete();
+      };
+
+      var complete_delay = function(e) {
+        var timeout = 100 * ++ i;
+
+        setTimeout(function() {
+          e.set(timeout, timeout);
+          e.complete();
+        }, timeout);
+      };
+
+      var spy1 = sinon.spy(complete_delay)
+        , spy2 = sinon.spy(complete)
+        , spy3 = sinon.spy(complete_delay)
+        , spy4 = sinon.spy(complete)
+        , spy5 = sinon.spy(complete_delay);
+
+      object
+        .on('test', spy1)
+        .on('test', spy2)
+        .on('test', spy3)
+        .on('test', spy4)
+        .on('test', spy5)
+        .parallel('test', function(e) {
+          expect(spy1).have.been.called;
+          expect(spy2).have.been.called;
+          expect(spy3).have.been.called;
+          expect(spy4).have.been.called;
+          expect(spy5).have.been.called;
+          expect(e.get('100')).to.equal(100);
+          expect(e.get('200')).to.equal(200);
+          expect(e.get('300')).to.equal(300);
+          expect(e.get('400')).to.equal(400);
+          expect(e.get('500')).to.equal(500);
+          done();
+        });
+    });
+
+    it('should not call any listeners in current event loop iteration', function(done) {
+      var spy1 = sinon.spy(function(e) {
+            e.complete();
+          })
+        , spy2 = sinon.spy(function(e) {
+            setTimeout(function() {
+              e.complete();
+            }, 100);
+          });
+
+      object
+        .on('test', spy1)
+        .on('test', spy2)
+        .parallel('test', function(e) {
+          expect(spy1).have.been.called;
+          expect(spy2).have.been.called;
+          done();
+        });
+
+      expect(spy1).have.not.been.called;
+      expect(spy2).have.not.been.called;
+    });
+  });
+
   describe('#size', function() {
     var object;
 
