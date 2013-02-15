@@ -159,7 +159,7 @@ ee.on('nyan', function(e, argument1, argument2, argument3) {
 
 then
 
-```
+```js
 ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
   console.log('complete!');
 }, function(object, e, args) { // hook
@@ -171,7 +171,7 @@ console.log('◡( ╹◡╹ )◡');
 
 or
 
-```
+```js
 ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
   console.log('complete!');
 }, function(object, e, args, call) { // hook
