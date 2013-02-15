@@ -306,35 +306,34 @@ describe('Ee', function() {
       expect(spy_call_next_delay2).have.not.been.called;
     });
 
-    it('should be called if Event#stop is called', function(done) {
+    it('should not be called if Event#abort is called', function(done) {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next_delay1)
         .once('test', function(e) {
-          e.stop();
+          e.abort();
         })
         .on('test', spy_call_next2)
         .on('test', spy_call_next_delay2)
         .defer('test', function(e) {
-          expect(e.stopped).to.equal(true);
+          expect(e.aborted).to.equal(true);
+          expect(e.prevented).to.equal(false);
           expect(spy_call_next1).have.been.called;
           expect(spy_call_next_delay1).have.been.called;
           expect(spy_call_next2).have.not.been.called;
           expect(spy_call_next_delay2).have.not.been.called;
 
           object.defer('test', function(e) {
-            expect(e.stopped).to.equal(false);
-            expect(spy_call_next1).have.been.called;
-            expect(spy_call_next_delay1).have.been.called;
+            expect(e.aborted).to.equal(false);
+            expect(e.prevented).to.equal(false);
             expect(spy_call_next2).have.been.called;
             expect(spy_call_next_delay2).have.been.called;
-
             done();
           });
         });
     });
 
-    it('should be called if Event#prevent is called', function(done) {
+    it('should not be called if Event#prevent is called', function(done) {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next_delay1)
@@ -344,6 +343,7 @@ describe('Ee', function() {
         .on('test', spy_call_next2)
         .on('test', spy_call_next_delay2)
         .defer('test', function(e) {
+          expect(e.aborted).to.equal(false);
           expect(e.prevented).to.equal(true);
           expect(spy_call_next1).have.been.called;
           expect(spy_call_next_delay1).have.been.called;
@@ -351,9 +351,35 @@ describe('Ee', function() {
           expect(spy_call_next_delay2).have.not.been.called;
 
           object.defer('test', function(e) {
+            expect(e.aborted).to.equal(false);
             expect(e.prevented).to.equal(false);
-            expect(spy_call_next1).have.been.called;
-            expect(spy_call_next_delay1).have.been.called;
+            expect(spy_call_next2).have.been.called;
+            expect(spy_call_next_delay2).have.been.called;
+            done();
+          });
+        });
+    });
+
+    it('should not be called if Event#stop is called', function(done) {
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next_delay1)
+        .once('test', function(e) {
+          e.stop();
+        })
+        .on('test', spy_call_next2)
+        .on('test', spy_call_next_delay2)
+        .defer('test', function(e) {
+          expect(e.prevented).to.equal(true);
+          expect(e.aborted).to.equal(true);
+          expect(spy_call_next1).have.been.called;
+          expect(spy_call_next_delay1).have.been.called;
+          expect(spy_call_next2).have.not.been.called;
+          expect(spy_call_next_delay2).have.not.been.called;
+
+          object.defer('test', function(e) {
+            expect(e.prevented).to.equal(false);
+            expect(e.aborted).to.equal(false);
             expect(spy_call_next2).have.been.called;
             expect(spy_call_next_delay2).have.been.called;
             done();
