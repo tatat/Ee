@@ -430,6 +430,38 @@ describe('Ee', function() {
           });
         });
     });
+
+    it('can like this with hook', function(done) {
+      var noop = function() {};
+
+      var spy = sinon.spy(function(e, next) {
+        next();
+      });
+
+      object
+        .on('test', noop)
+        .on('test', spy)
+        .on('test', noop)
+        .on('test', spy);
+
+      object.defer('test', function(e) {
+        expect(spy).have.been.calledTwice;
+        done();
+      }, function(listener, e, args, call) {
+        if (listener.listener.length < 2) {
+          call();
+          e.next();
+        } else {
+          if (typeof args[1] !== 'function') {
+            args[1] = function() {
+              e.next();
+            };
+          }
+
+          call();
+        }
+      });
+    });
   });
 
   describe('#size', function() {
