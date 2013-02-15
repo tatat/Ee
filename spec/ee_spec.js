@@ -14,7 +14,7 @@ describe('Ee', function() {
       spy2 = sinon.spy();
     });
 
-    it('should be called thrice', function() {
+    it('should add listener called thrice', function() {
       object
         .on('test', spy1)
         .on('test', spy2)
@@ -29,7 +29,7 @@ describe('Ee', function() {
       expect(spy2).have.been.calledThrice;
     });
 
-    it('should be called once', function() {
+    it('should add listener called once', function() {
       object
         .on('test', spy1, 1)
         .emit('test')
@@ -45,7 +45,7 @@ describe('Ee', function() {
       expect(spy2).have.been.calledOnce;
     });
 
-    it('should be called twice', function() {
+    it('should add listener called twice', function() {
       object
         .on('test', spy1, 2)
         .emit('test')
@@ -55,7 +55,7 @@ describe('Ee', function() {
       expect(spy1).have.been.calledTwice;
     });
 
-    it('should be called to order', function() {
+    it('should add listener called to order', function() {
       object
         .on('test', spy1)
         .first('test', spy2)
@@ -74,7 +74,7 @@ describe('Ee', function() {
       spy2 = sinon.spy();
     });
 
-    it('should be removed (should be called once)', function() {
+    it('should remove listener (listener should be called once)', function() {
       object
         .on('test', spy1)
         .emit('test')
@@ -84,7 +84,7 @@ describe('Ee', function() {
       expect(spy1).have.been.calledOnce;
     });
 
-    it('should not be removed (should be called twice)', function() {
+    it('should not remove other listener (listener should be called twice)', function() {
       object
         .on('test', spy1)
         .emit('test')
@@ -94,7 +94,7 @@ describe('Ee', function() {
       expect(spy1).have.been.calledTwice;
     });
 
-    it('should be removed all (should be called once)', function() {
+    it('should remove all listeners', function() {
       object
         .on('test', spy1)
         .on('test', spy2)
@@ -124,7 +124,7 @@ describe('Ee', function() {
       spy2 = sinon.spy();
     });
 
-    it('should be called on object context', function() {
+    it('should call listener on object context', function() {
       object
         .on('test', spy1)
         .emit('test');
@@ -132,7 +132,7 @@ describe('Ee', function() {
       expect(spy1).have.been.calledOn(object);
     });
 
-    it('should be called with instance of object.Event', function() {
+    it('should call listener with instance of object.Event', function() {
       var spy = sinon.spy(function(e) {
         expect(e).to.be.instanceof(object.Event);
       });
@@ -144,7 +144,7 @@ describe('Ee', function() {
       expect(spy).have.been.called;
     });
 
-    it('should be called with arguments', function() {
+    it('should call listener with arguments', function() {
       var spy = sinon.spy(function(e, argument1, argument2, argument3) {
         expect(e).to.be.instanceof(object.Event);
         expect(argument1).to.equal('argument 1');
@@ -159,7 +159,7 @@ describe('Ee', function() {
       expect(spy).have.been.called;
     });
 
-    it('should not be called if Event#stopped is called', function() {
+    it('should not call listener if Event#stop is called', function() {
       var spy = sinon.spy(function(e) {
         e.stop();
       });
@@ -191,7 +191,7 @@ describe('Ee', function() {
       expect(spy1).have.been.called;
     });
 
-    it('should be called with custom event', function() {
+    it('should call listener with custom event', function() {
       var spy = sinon.spy(function(e) {
         expect(e).to.be.instanceof(CustomEvent);
       });
@@ -203,6 +203,24 @@ describe('Ee', function() {
         .emit('test');
 
       expect(spy).have.been.called;
+    });
+
+    it('should throw Error', function() {
+      var block = function() {
+        object.emit('error');
+      };
+
+      expect(block).have.throw(Error);
+    });
+
+    it('should not throw Error', function() {
+      var block = function() {
+        object
+          .on('error', function(e) {})
+          .emit('error');
+      };
+
+      expect(block).have.not.throw();
     });
   });
 
@@ -232,7 +250,7 @@ describe('Ee', function() {
       spy_call_next_delay2 = sinon.spy(call_next_delay);
     });
 
-    it('should not be called', function() {
+    it('should not call listener if Event#next is not called', function() {
       object
         .on('test', spy1)
         .on('test', spy2)
@@ -242,7 +260,7 @@ describe('Ee', function() {
       expect(spy2).have.not.been.called;
     });
 
-    it('should be called', function() {
+    it('should call listener', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
@@ -252,7 +270,7 @@ describe('Ee', function() {
       expect(spy_call_next2).have.been.called;
     });
 
-    it('should be called by hook', function() {
+    it('should call listener in hook', function() {
       var spy_complete = sinon.spy(function(e) {
         expect(spy_call_next1).have.been.called;
         expect(spy_call_next2).have.been.called;
@@ -283,7 +301,7 @@ describe('Ee', function() {
       expect(spy_hook).to.have.been.calledTwice;
     });
 
-    it('should be called with arguments', function() {
+    it('should call listener with arguments', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
@@ -293,7 +311,7 @@ describe('Ee', function() {
         });
     });
 
-    it('should be called delayed', function(done) {
+    it('should call listener with delay', function(done) {
       object
         .on('test', spy_call_next_delay1)
         .on('test', spy_call_next_delay2)
@@ -306,7 +324,7 @@ describe('Ee', function() {
       expect(spy_call_next_delay2).have.not.been.called;
     });
 
-    it('should not be called if Event#abort is called', function(done) {
+    it('should not call listener if Event#abort is called', function(done) {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next_delay1)
@@ -333,7 +351,7 @@ describe('Ee', function() {
         });
     });
 
-    it('should not be called if Event#prevent is called', function(done) {
+    it('should not call listener if Event#prevent is called', function(done) {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next_delay1)
@@ -360,7 +378,7 @@ describe('Ee', function() {
         });
     });
 
-    it('should not be called if Event#stop is called', function(done) {
+    it('should not call listener if Event#stop is called', function(done) {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next_delay1)
