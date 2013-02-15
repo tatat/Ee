@@ -202,6 +202,39 @@ console.log('◡( ╹◡╹ )◡');
     nyan!
     complete!
 
+*application*
+
+```js
+ee.on('nyan', function() {
+  // something to do.
+}).on('nyan', function(e, next) {
+  setTimeout(function() {
+    next();
+  }, 1000);
+}).on('nyan', function(e) {
+  // something to do.
+});
+
+ee.defer('nyan', function(e) {
+  console.log('complete!');
+}, function(object, e, args, call) {
+  if (object.listener.length < 2) {
+    call();
+    e.next();
+  } else {
+    if (typeof args[1] !== 'function') {
+      args[1] = function() {
+        e.next();
+      };
+    }
+
+    call();
+  }
+});
+```
+
+    complete!
+
 #### ee.parallel(event, [arguments], [complete], [hook]) -> ee
 #### ee.parallel(event, [complete], [hook]) -> ee
 
