@@ -252,6 +252,37 @@ describe('Ee', function() {
       expect(spy_call_next2).have.been.called;
     });
 
+    it('should be called by hook', function() {
+      var spy_complete = sinon.spy(function(e) {
+        expect(spy_call_next1).have.been.called;
+        expect(spy_call_next2).have.been.called;
+      });
+
+      var spy_hook = sinon.spy(function(listener, e, args, call) {
+        expect(args).to.deep.equal([e, 'some argument']);
+        expect(args[0]).to.deep.equal(e);
+
+        switch (listener.listener) {
+        case spy_call_next1:
+          expect(spy_call_next1).have.not.been.called;
+          break;
+        case spy_call_next2:
+          expect(spy_call_next2).have.not.been.called;
+          break;
+        }
+
+        call();
+      });
+
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next2)
+        .defer('test', ['some argument'], spy_complete, spy_hook);
+
+      expect(spy_complete).to.have.been.calledOnce;
+      expect(spy_hook).to.have.been.calledTwice;
+    });
+
     it('should be called with arguments', function() {
       object
         .on('test', spy_call_next1)
