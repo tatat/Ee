@@ -431,6 +431,12 @@ describe('Ee', function() {
         });
     });
 
+    it('should call complete callback even if no listener is set', function(done) {
+      object.defer('test', function(e) {
+        done();
+      });
+    });
+
     it('can like this with hook', function(done) {
       var noop = function() {};
 
@@ -538,6 +544,12 @@ describe('Ee', function() {
 
       expect(spy1).have.not.been.called;
       expect(spy2).have.not.been.called;
+    });
+
+    it('should call complete callback even if no listener is set', function(done) {
+      object.defer('test', function(e) {
+        done();
+      });
     });
   });
 
