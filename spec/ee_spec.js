@@ -270,12 +270,36 @@ describe('Ee', function() {
       expect(spy_call_next2).have.been.called;
     });
 
-    it('should call listener in hook', function() {
+    it('should call listener in hook (with 3 arguments)', function() {
       var spy_complete = sinon.spy(function(e) {
         expect(spy_call_next1).have.been.called;
         expect(spy_call_next2).have.been.called;
       });
 
+      var spy_hook = sinon.spy(function(listener, e, args) {
+        expect(args).to.deep.equal([e, 'some argument']);
+        expect(args[0]).to.deep.equal(e);
+
+        switch (listener.listener) {
+        case spy_call_next1:
+          expect(spy_call_next1).have.not.been.called;
+          break;
+        case spy_call_next2:
+          expect(spy_call_next2).have.not.been.called;
+          break;
+        }
+      });
+
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next2)
+        .defer('test', ['some argument'], spy_complete, spy_hook);
+
+      expect(spy_complete).to.have.been.calledOnce;
+      expect(spy_hook).to.have.been.calledTwice;
+    });
+
+    it('should call listener in hook (with 4 arguments)', function(done) {
       var spy_hook = sinon.spy(function(listener, e, args, call) {
         expect(args).to.deep.equal([e, 'some argument']);
         expect(args[0]).to.deep.equal(e);
@@ -289,16 +313,18 @@ describe('Ee', function() {
           break;
         }
 
-        call();
+        setTimeout(call, 100);
       });
 
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
-        .defer('test', ['some argument'], spy_complete, spy_hook);
-
-      expect(spy_complete).to.have.been.calledOnce;
-      expect(spy_hook).to.have.been.calledTwice;
+        .defer('test', ['some argument'], function(e) {
+          expect(spy_call_next1).have.been.called;
+          expect(spy_call_next2).have.been.called;
+          expect(spy_hook).to.have.been.calledTwice;
+          done();
+        }, spy_hook);
     });
 
     it('should call listener with arguments', function() {

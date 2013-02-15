@@ -155,16 +155,36 @@ ee.on('nyan', function(e, argument1, argument2, argument3) {
   console.log(argument1);
   e.next(); // must be called
 });
+```
 
+then
+
+```
 ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
   console.log('complete!');
-}, function(object, e, args, call) { // hook
+}, function(object, e, args) { // hook
   console.log('current listener expects ' + object.listener.length + ' arguments');
-  call(); // must be called
 });
 
 console.log('◡( ╹◡╹ )◡');
 ```
+
+or
+
+```
+ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
+  console.log('complete!');
+}, function(object, e, args, call) { // hook
+  console.log('current listener expects ' + object.listener.length + ' arguments');
+  setTimeout(function() {
+    call(); // must be called
+  }, 100);
+});
+
+console.log('◡( ╹◡╹ )◡');
+```
+
+output
 
     current listener expects 4 arguments
     nyan!
