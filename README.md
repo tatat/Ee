@@ -205,6 +205,8 @@ console.log('◡( ╹◡╹ )◡');
 #### ee.parallel(event, [arguments], [complete], [hook]) -> ee
 #### ee.parallel(event, [complete], [hook]) -> ee
 
+Execute each of the listeners.
+
 ```js
 ee.on('nyan', function(e) {
   setTimeout(function() {
