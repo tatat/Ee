@@ -206,6 +206,131 @@ describe('Ee', function() {
     });
   });
 
+  describe('#defer', function() {
+    var object, spy1, spy2;
+
+    beforeEach(function() {
+      object = new Ee();
+
+      spy1 = sinon.spy();
+      spy2 = sinon.spy();
+
+      var call_next = function(e) {
+        e.next();
+      };
+
+      spy_call_next1 = sinon.spy(call_next);
+      spy_call_next2 = sinon.spy(call_next);
+
+      var call_next_delay = function(e) {
+        setTimeout(function() {
+          e.next();
+        }, 100);
+      };
+
+      spy_call_next_delay1 = sinon.spy(call_next_delay);
+      spy_call_next_delay2 = sinon.spy(call_next_delay);
+    });
+
+    it('should not be called', function() {
+      object
+        .on('test', spy1)
+        .on('test', spy2)
+        .defer('test');
+
+      expect(spy1).have.been.called;
+      expect(spy2).have.not.been.called;
+    });
+
+    it('should be called', function() {
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next2)
+        .defer('test');
+
+      expect(spy_call_next1).have.been.called;
+      expect(spy_call_next2).have.been.called;
+    });
+
+    it('should be called with arguments', function() {
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next2)
+        .defer('test', ['argument1', 'argument2'], function(e) {
+          expect(spy_call_next1).have.been.calledWith(e, 'argument1', 'argument2');
+          expect(spy_call_next2).have.been.calledWith(e, 'argument1', 'argument2');
+        });
+    });
+
+    it('should be called delayed', function(done) {
+      object
+        .on('test', spy_call_next_delay1)
+        .on('test', spy_call_next_delay2)
+        .defer('test', function(e) {
+          expect(spy_call_next_delay2).have.been.called;
+          done();
+        });
+
+      expect(spy_call_next_delay1).have.been.called;
+      expect(spy_call_next_delay2).have.not.been.called;
+    });
+
+    it('should be called if Event#stop is called', function(done) {
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next_delay1)
+        .once('test', function(e) {
+          e.stop();
+        })
+        .on('test', spy_call_next2)
+        .on('test', spy_call_next_delay2)
+        .defer('test', function(e) {
+          expect(e.stopped).to.equal(true);
+          expect(spy_call_next1).have.been.called;
+          expect(spy_call_next_delay1).have.been.called;
+          expect(spy_call_next2).have.not.been.called;
+          expect(spy_call_next_delay2).have.not.been.called;
+
+          object.defer('test', function(e) {
+            expect(e.stopped).to.equal(false);
+            expect(spy_call_next1).have.been.called;
+            expect(spy_call_next_delay1).have.been.called;
+            expect(spy_call_next2).have.been.called;
+            expect(spy_call_next_delay2).have.been.called;
+
+            done();
+          });
+        });
+    });
+
+    it('should be called if Event#prevent is called', function(done) {
+      object
+        .on('test', spy_call_next1)
+        .on('test', spy_call_next_delay1)
+        .once('test', function(e) {
+          e.prevent();
+        })
+        .on('test', spy_call_next2)
+        .on('test', spy_call_next_delay2)
+        .defer('test', function(e) {
+          expect(e.prevented).to.equal(true);
+          expect(spy_call_next1).have.been.called;
+          expect(spy_call_next_delay1).have.been.called;
+          expect(spy_call_next2).have.not.been.called;
+          expect(spy_call_next_delay2).have.not.been.called;
+
+          object.defer('test', function(e) {
+            expect(e.prevented).to.equal(false);
+            expect(spy_call_next1).have.been.called;
+            expect(spy_call_next_delay1).have.been.called;
+            expect(spy_call_next2).have.been.called;
+            expect(spy_call_next_delay2).have.been.called;
+            done();
+          });
+        });
+    });
+  });
+
   describe('#size', function() {
     var object;
 
