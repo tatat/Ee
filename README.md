@@ -169,6 +169,15 @@ ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
 console.log('◡( ╹◡╹ )◡');
 ```
 
+    current listener expects 4 arguments
+    nyan!
+    nyan?
+    undefined
+    ◡( ╹◡╹ )◡
+    current listener expects 2 arguments
+    nyan!
+    complete!
+
 or
 
 ```js
@@ -184,16 +193,15 @@ ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
 console.log('◡( ╹◡╹ )◡');
 ```
 
-output
-
     current listener expects 4 arguments
+    ◡( ╹◡╹ )◡
     nyan!
     nyan?
     undefined
-    ◡( ╹◡╹ )◡
     current listener expects 2 arguments
     nyan!
     complete!
+
 
 
 ### Ee.Event
