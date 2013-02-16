@@ -1,13 +1,29 @@
 {
-  "name": "Ee",
+  "name": "ee",
   "version": "0.0.1",
-  "dependencies": {
+  "description": "Event-Driven library.",
+  "keywords": [
+    "event",
+    "events",
+    "emitter",
+    "eventemitter"
+  ],
+  "author": "tatあt <ioiioioloo@gmail.com>",
+  "licenses": [{"type": "MIT"}],
+  "homepage": "https://github.com/tatat/Ee",
+  "repositories": [{
+      "type": "git",
+      "url": "git@github.com:tatat/Ee.git"
+  }],
+  "devDependencies": {
     "mocha": "*",
     "sinon": "*",
     "chai": "*",
     "sinon-chai": "*",
     "uglify-js": "*"
   },
+  "engines": ["node"],
+  "main": "./lib/ee",
   "scripts": {
     "test": "make test",
     "test-watch": "make test-watch",
