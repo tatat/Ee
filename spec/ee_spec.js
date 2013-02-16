@@ -242,7 +242,7 @@ describe('Ee', function() {
     });
   });
 
-  describe('#defer', function() {
+  describe('#chain', function() {
     var object, spy1, spy2;
 
     beforeEach(function() {
@@ -272,7 +272,7 @@ describe('Ee', function() {
       object
         .on('test', spy1)
         .on('test', spy2)
-        .defer('test');
+        .chain('test');
 
       expect(spy1).have.been.called;
       expect(spy2).have.not.been.called;
@@ -282,7 +282,7 @@ describe('Ee', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
-        .defer('test');
+        .chain('test');
 
       expect(spy_call_next1).have.been.called;
       expect(spy_call_next2).have.been.called;
@@ -311,7 +311,7 @@ describe('Ee', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
-        .defer('test', ['some argument'], spy_complete, spy_hook);
+        .chain('test', ['some argument'], spy_complete, spy_hook);
 
       expect(spy_complete).to.have.been.calledOnce;
       expect(spy_hook).to.have.been.calledTwice;
@@ -337,7 +337,7 @@ describe('Ee', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
-        .defer('test', ['some argument'], function(e) {
+        .chain('test', ['some argument'], function(e) {
           expect(spy_call_next1).have.been.called;
           expect(spy_call_next2).have.been.called;
           expect(spy_hook).to.have.been.calledTwice;
@@ -349,7 +349,7 @@ describe('Ee', function() {
       object
         .on('test', spy_call_next1)
         .on('test', spy_call_next2)
-        .defer('test', ['argument1', 'argument2'], function(e) {
+        .chain('test', ['argument1', 'argument2'], function(e) {
           expect(spy_call_next1).have.been.calledWith(e, 'argument1', 'argument2');
           expect(spy_call_next2).have.been.calledWith(e, 'argument1', 'argument2');
         });
@@ -359,7 +359,7 @@ describe('Ee', function() {
       object
         .on('test', spy_call_next_delay1)
         .on('test', spy_call_next_delay2)
-        .defer('test', function(e) {
+        .chain('test', function(e) {
           expect(spy_call_next_delay2).have.been.called;
           done();
         });
@@ -377,7 +377,7 @@ describe('Ee', function() {
         })
         .on('test', spy_call_next2)
         .on('test', spy_call_next_delay2)
-        .defer('test', function(e) {
+        .chain('test', function(e) {
           expect(e.aborted).to.equal(true);
           expect(e.prevented).to.equal(false);
           expect(spy_call_next1).have.been.called;
@@ -385,7 +385,7 @@ describe('Ee', function() {
           expect(spy_call_next2).have.not.been.called;
           expect(spy_call_next_delay2).have.not.been.called;
 
-          object.defer('test', function(e) {
+          object.chain('test', function(e) {
             expect(e.aborted).to.equal(false);
             expect(e.prevented).to.equal(false);
             expect(spy_call_next2).have.been.called;
@@ -404,7 +404,7 @@ describe('Ee', function() {
         })
         .on('test', spy_call_next2)
         .on('test', spy_call_next_delay2)
-        .defer('test', function(e) {
+        .chain('test', function(e) {
           expect(e.aborted).to.equal(false);
           expect(e.prevented).to.equal(true);
           expect(spy_call_next1).have.been.called;
@@ -412,7 +412,7 @@ describe('Ee', function() {
           expect(spy_call_next2).have.not.been.called;
           expect(spy_call_next_delay2).have.not.been.called;
 
-          object.defer('test', function(e) {
+          object.chain('test', function(e) {
             expect(e.aborted).to.equal(false);
             expect(e.prevented).to.equal(false);
             expect(spy_call_next2).have.been.called;
@@ -431,7 +431,7 @@ describe('Ee', function() {
         })
         .on('test', spy_call_next2)
         .on('test', spy_call_next_delay2)
-        .defer('test', function(e) {
+        .chain('test', function(e) {
           expect(e.prevented).to.equal(true);
           expect(e.aborted).to.equal(true);
           expect(spy_call_next1).have.been.called;
@@ -439,7 +439,7 @@ describe('Ee', function() {
           expect(spy_call_next2).have.not.been.called;
           expect(spy_call_next_delay2).have.not.been.called;
 
-          object.defer('test', function(e) {
+          object.chain('test', function(e) {
             expect(e.prevented).to.equal(false);
             expect(e.aborted).to.equal(false);
             expect(spy_call_next2).have.been.called;
@@ -450,7 +450,7 @@ describe('Ee', function() {
     });
 
     it('should call complete callback even if no listener is set', function(done) {
-      object.defer('test', function(e) {
+      object.chain('test', function(e) {
         done();
       });
     });
@@ -468,7 +468,7 @@ describe('Ee', function() {
         .on('test', noop)
         .on('test', spy);
 
-      object.defer('test', function(e) {
+      object.chain('test', function(e) {
         expect(spy).have.been.calledTwice;
         done();
       }, function(listener, e, args, call) {
@@ -502,7 +502,7 @@ describe('Ee', function() {
       var complete = function(e) {
         var timeout = 100 * ++ i;
         e.set(timeout, timeout);
-        e.complete();
+        e.done();
       };
 
       var complete_delay = function(e) {
@@ -510,7 +510,7 @@ describe('Ee', function() {
 
         setTimeout(function() {
           e.set(timeout, timeout);
-          e.complete();
+          e.done();
         }, timeout);
       };
 
@@ -543,11 +543,11 @@ describe('Ee', function() {
 
     it('should not call any listeners in current event loop iteration', function(done) {
       var spy1 = sinon.spy(function(e) {
-            e.complete();
+            e.done();
           })
         , spy2 = sinon.spy(function(e) {
             setTimeout(function() {
-              e.complete();
+              e.done();
             }, 100);
           });
 
@@ -565,7 +565,7 @@ describe('Ee', function() {
     });
 
     it('should call complete callback even if no listener is set', function(done) {
-      object.defer('test', function(e) {
+      object.chain('test', function(e) {
         done();
       });
     });

@@ -137,8 +137,8 @@ Otherwise,
 ee.emit(new ee.Event('nyan'), 'nyan!', 'nyan?');
 ```
 
-#### ee.defer(event, [arguments], [complete], [hook]) -> ee
-#### ee.defer(event, [complete], [hook]) -> ee
+#### ee.chain(event, [arguments], [complete], [hook]) -> ee
+#### ee.chain(event, [complete], [hook]) -> ee
 
 Execute each of the listeners.
 
@@ -160,7 +160,7 @@ ee.on('nyan', function(e, argument1, argument2, argument3) {
 then
 
 ```js
-ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
+ee.chain('nyan', ['nyan!', 'nyan?'], function(e) { // complete
   console.log('complete!');
 }, function(object, e, args) { // hook
   console.log('current listener expects ' + object.listener.length + ' arguments');
@@ -181,7 +181,7 @@ console.log('◡( ╹◡╹ )◡');
 or
 
 ```js
-ee.defer('nyan', ['nyan!', 'nyan?'], function(e) { // complete
+ee.chain('nyan', ['nyan!', 'nyan?'], function(e) { // complete
   console.log('complete!');
 }, function(object, e, args, call) { // hook
   console.log('current listener expects ' + object.listener.length + ' arguments');
@@ -215,7 +215,7 @@ ee.on('nyan', function() {
   // something to do.
 });
 
-ee.defer('nyan', function(e) {
+ee.chain('nyan', function(e) {
   console.log('complete!');
 }, function(object, e, args, call) {
   if (object.listener.length < 2) {
@@ -244,17 +244,17 @@ Execute each of the listeners.
 ee.on('nyan', function(e) {
   setTimeout(function() {
     e.set('data 1', 'listener 1');
-    e.complete(); // must be called
+    e.done(); // must be called
   }, (Math.floor(Math.random() * 10) + 1) * 1000);
 }).on('nyan', function(e) {
   setTimeout(function() {
     e.set('data 2', 'listener 2');
-    e.complete(); // must be called
+    e.done(); // must be called
   }, (Math.floor(Math.random() * 10) + 1) * 1000);
 }).on('nyan', function(e) {
   setTimeout(function() {
     e.set('data 3', 'listener 3');
-    e.complete(); // must be called
+    e.done(); // must be called
   }, (Math.floor(Math.random() * 10) + 1) * 1000);
 });
 
@@ -311,7 +311,7 @@ ee.on('nyan', function(e) {
   }
 });
 
-ee.defer('nyan', function(e) {
+ee.chain('nyan', function(e) {
   if (e.prevented) {
     // do nothing.
   } else {
