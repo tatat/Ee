@@ -63,6 +63,24 @@ describe('Ee', function() {
 
       expect(spy2).have.been.calledBefore(spy1);
     });
+
+    it('should add and remove listeners by array', function() {
+      object
+        .on(['test1', 'test2'], [spy1, spy2])
+        .emit('test1')
+        .emit('test2');
+
+      expect(spy1).have.been.calledTwice;
+      expect(spy2).have.been.calledTwice;
+
+      object
+        .off(['test1', 'test2'], spy1)
+        .emit('test1')
+        .emit('test2');
+
+      expect(spy1).have.been.calledTwice;
+      expect(spy2).have.not.been.calledTwice;
+    });
   });
 
   describe('#off', function() {
@@ -584,7 +602,9 @@ describe('Ee', function() {
     var object;
 
     beforeEach(function() {
-      object = new Ee();
+      object = new Ee({
+        new_listener: true
+      });
     });
 
     it('should count how many times listeners have been called exactly', function() {
