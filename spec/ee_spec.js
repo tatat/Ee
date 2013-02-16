@@ -243,7 +243,7 @@ describe('Ee', function() {
   });
 
   describe('#chain', function() {
-    var object, spy1, spy2;
+    var object, spy1, spy2, spy_call_next1, spy_call_next2, spy_call_next_delay1, spy_call_next_delay2;
 
     beforeEach(function() {
       object = new Ee();
