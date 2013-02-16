@@ -5,10 +5,12 @@
     "mocha": "*",
     "sinon": "*",
     "chai": "*",
-    "sinon-chai": "*"
+    "sinon-chai": "*",
+    "uglify-js": "*"
   },
   "scripts": {
     "test": "make test",
-    "test-watch": "make test-watch"
+    "test-watch": "make test-watch",
+    "uglify": "make uglify"
   }
 }
