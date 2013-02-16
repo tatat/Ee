@@ -1,4 +1,8 @@
-if (typeof module !== 'undefined' && typeof module.exports === 'object') {
+if (
+  typeof module !== 'undefined' &&
+  module != null &&
+  typeof module.exports === 'object'
+) {
   var sinon = require('sinon')
     , chai = require('chai').use(require('sinon-chai'))
     , expect = chai.expect
