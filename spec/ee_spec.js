@@ -1,11 +1,15 @@
-var sinon = require('sinon')
-  , chai = require('chai').use(require('sinon-chai'))
-  , expect = chai.expect
-  , Ee = require('../lib/ee');
+if (typeof module !== 'undefined' && typeof module.exports === 'object') {
+  var sinon = require('sinon')
+    , chai = require('chai').use(require('sinon-chai'))
+    , expect = chai.expect
+    , Ee = require('../lib/ee');
+} else {
+  var expect = chai.expect;
+}
 
 describe('Ee', function() {
 
-  describe('#on, #once, $first', function() {
+  describe('#on, #once, #first', function() {
     var object, spy1, spy2;
 
     beforeEach(function() {
@@ -494,7 +498,6 @@ describe('Ee', function() {
     beforeEach(function() {
       object = new Ee();
     });
-
 
     it('should call all listeners and data have been set', function(done) {
       var i = 0;
