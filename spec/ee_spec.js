@@ -161,6 +161,139 @@ describe('Ee', function() {
     });
   });
 
+  describe('#reserve, #unreserve', function() {
+    var object;
+
+    beforeEach(function() {
+      object = new Ee();
+    });
+
+    it('should reserve or unreserve events', function() {
+      var keys = ['test1', 'test2', 'test3'];
+
+      expect(object.__events).to.not.have.keys(keys);
+
+      object.reserve(keys);
+
+      expect(object.__events).to.have.keys(keys);
+
+      object.unreserve(keys);
+
+      expect(object.__events).to.not.have.keys(keys);
+    });
+
+    it('should make keys undeletable or deletable', function() {
+      var noop = function() {};
+
+      expect(object.__events).to.not.have.key('test');
+
+      object.on('test', noop);
+
+      expect(object.__events).to.have.key('test');
+
+      object.off('test', noop);
+
+      expect(object.__events).to.not.have.key('test');
+
+      object.on('test', noop)
+        .reserve('test');
+
+      expect(object.__events).to.have.key('test');
+
+      object.off('test', noop);
+
+      expect(object.__events).to.have.key('test');
+
+      object.on('test', [noop, noop])
+        .unreserve('test');
+
+      expect(object.__events).to.have.key('test');
+
+      object.off('test', noop);
+
+      expect(object.__events).to.have.key('test');
+
+      object.off('test', noop);
+
+      expect(object.__events).to.not.have.key('test');
+    });
+  });
+
+  describe('#lookup', function() {
+    var object, noop;
+
+    beforeEach(function() {
+      object = new Ee();
+      noop = function() {};
+
+      object.reserve('test.1.nyan!')
+        .reserve('test.2.nyan!')
+        .reserve('test.3.nyan?');
+    });
+
+    it('should return matched event type (String)', function() {
+      expect(object.lookup().sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+      expect(object.lookup('').sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+      expect(object.lookup('test').sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+      expect(object.lookup('nyan!').sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!']);
+      expect(object.lookup('1').sort()).to.deep.equal(['test.1.nyan!']);
+    });
+
+    it('should return matched event type (RegExp)', function() {
+      expect(object.lookup(/[23]/).sort()).to.deep.equal(['test.2.nyan!', 'test.3.nyan?']);
+      expect(object.lookup(/^test\./).sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+      expect(object.lookup(/none/).sort()).to.be.empty;
+
+      object.unreserve('test.1.nyan!');
+
+      expect(object.lookup().sort()).to.deep.equal(['test.2.nyan!', 'test.3.nyan?']);
+
+      object.on('test.1.nyan!', noop);
+
+      expect(object.lookup().sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+
+      object.off('test.1.nyan!')
+        .off('test.2.nyan!')
+        .off('test.3.nyan?');
+
+      expect(object.lookup().sort()).to.deep.equal(['test.2.nyan!', 'test.3.nyan?']);
+
+      object.on('test.1.nyan!', noop);
+
+      expect(object.lookup().sort()).to.deep.equal(['test.1.nyan!', 'test.2.nyan!', 'test.3.nyan?']);
+
+      object.off('test.1.nyan!', noop);
+
+      expect(object.lookup().sort()).to.deep.equal(['test.2.nyan!', 'test.3.nyan?']);
+    });
+
+    it('should callback', function() {
+      var spy1 = sinon.spy()
+        , spy2 = sinon.spy()
+        , spy3 = sinon.spy();
+
+      object
+        .on('test.1.nyan!', spy1)
+        .on('test.2.nyan!', spy2)
+        .on('test.3.nyan?', spy3)
+        .lookup(/nyan!/, function(event) {
+          this.emit(event);
+        });
+
+      expect(spy1).to.have.been.calledOnce;
+      expect(spy2).to.have.been.calledOnce;
+      expect(spy3).to.have.not.been.called;
+    });
+
+    it('should change return value depending on arguments', function() {
+      expect(object.lookup()).to.be.an.instanceOf(Array);
+      expect(object.lookup('test')).to.be.an.instanceOf(Array);
+      expect(object.lookup('test', function() {})).to.be.an.instanceOf(Array);
+      expect(object.lookup('test', function() {}, true)).to.be.an.instanceOf(Ee);
+      expect(object.lookup('test', null, true)).to.be.an.instanceOf(Array);
+    });
+  });
+
   describe('#off', function() {
     var object, spy1, spy2;
 
