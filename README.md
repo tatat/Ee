@@ -276,6 +276,7 @@ ee.chain('nyan', function(e) {
 
     complete!
 
+
 #### ee.parallel(event, [arguments], [complete], [hook]) -> ee
 #### ee.parallel(event, [complete], [hook]) -> ee
 
@@ -310,16 +311,20 @@ ee.parallel('nyan', function(e) {
     listener 2
     listener 3
 
+
 #### ee.reserve(event) -> ee
 
 Reserve specified event.
+
 
 #### ee.unreserve(event) -> ee
 
 Cancel reservation of specified event.
 
+
 #### ee.lookup([pattern], [callback]) -> Array
 #### ee.lookup(pattern, callback, [return\_self]) -> Array | ee
+#### ee.lookup(callback, [return\_self]) -> Array | ee
 
 Lookup events match to the specified pattern.  
 when `return_self` is `true`, then return `ee`.
@@ -343,11 +348,13 @@ console.log(ee.lookup());
 
     [ 'reserved' ]
 
+
 ### Ee.Event
 
 #### new Ee.Event(event)
 
 Create a new instance.
+
 
 #### e.abort() -> e
 
@@ -394,25 +401,70 @@ ee.chain('nyan', function(e) {
 });
 ```
 
+
 #### e.stop() -> e
 
 Set `e.aborted` and `e.prevented` to `true` and skip other listeners.
+
 
 #### e.next() -> e
 
 Execute next listener.
 
+
 #### e.get(key, [default_value]) -> mixed
 
 Get value or `default_value`.
+
 
 #### e.set(key, value) -> e
 
 Set value for key.
 
+
 #### e.unset(key) -> e
 
 Unset key.
+
+
+### Ee.DataStore (Utility)
+
+```js
+var object = new Ee.DataStore();
+
+object.set('nyan', 'ko!');
+
+console.log(object.get('nyan'));
+```
+
+    ko!
+
+or
+
+```js
+var object = {};
+
+Ee.DataStore.call(object);
+
+object.set('nyan', 'ko!');
+
+console.log(object.get('nyan'));
+```
+
+    ko!
+
+
+#### e.get(key, [default_value]) -> mixed
+
+Get value or `default_value`.
+
+
+#### e.set(key, value) -> e
+
+Set value for key.
+
+
+#### e.unset(key) -> e
 
 Licence
 --------------------
