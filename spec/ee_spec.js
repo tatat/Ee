@@ -291,6 +291,8 @@ describe('Ee', function() {
       expect(object.lookup('test', function() {})).to.be.an.instanceOf(Array);
       expect(object.lookup('test', function() {}, true)).to.be.an.instanceOf(Ee);
       expect(object.lookup('test', null, true)).to.be.an.instanceOf(Array);
+      expect(object.lookup(function() {})).to.be.an.instanceOf(Array);
+      expect(object.lookup(function() {}, true)).to.be.an.instanceOf(Ee);
     });
   });
 
