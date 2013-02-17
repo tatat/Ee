@@ -54,6 +54,12 @@ ee.on('nyan', function(e) {
 
 Adds a listener to the end of the listeners for the specified event.
 
+* `event`: string or array of string, event to listen. (required)
+* `listener`: function or array of function, listener. (required)
+* `times`: number, times to be executed. (optional)
+* `first`: boolean, add a listener to the beginning of the listeners. (optional)
+* `until`: string or array of string, listener will be removed when this event is executed. (optional)
+
 #### ee.first(event, listener, [times], [until]) -> ee
 
 Adds a listener to the beginning of the listeners for the specified event.
@@ -66,9 +72,20 @@ Adds a one time listener to the end of the listeners for the specified event.
 
 Adds a listener will be removed when specified event is executed.
 
-#### ee.within(ms, event, listener, [times], [first], [until]) -> ee
+#### ee.within(within, event, listener, [callback], [times], [first], [until]) -> ee
+#### ee.within(options) -> ee
 
 Adds a listener will be removed when specified time is reached.
+
+`options` is Object has keys
+
+* `within`: number, milliseconds. (required)
+* `event`: string or array of string, event to listen. (required)
+* `listener`: function or array of function, listener. (required)
+* `callback`: function, called when specified time is reached. (optional)
+* `times`: number, times to be executed. (optional)
+* `first`: boolean, add a listener to the beginning of the listeners. (optional)
+* `until`: string or array of string, listener will be removed when this event is executed. (optional)
 
 ```js
 ee.on('nyan', function(e) {
@@ -138,6 +155,8 @@ setTimeout(function() {
 
 Remove a listener or all listeners for the specified event.  
 
+* `event`: string or array of string, event to remove listener. (required)
+* `listener`: function or array of function, listener to be removed. (optional)
 
 #### ee.size([event]) -> Number
 

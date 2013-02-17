@@ -159,6 +159,43 @@ describe('Ee', function() {
         }, 100);
       }, 100);
     });
+
+    it('should callback with arguments', function(done) {
+      object
+        .within(200, 'test', function() {}
+        , function(listeners) {
+            expect(listeners).to.be.an.instanceOf(Array);
+            done();
+        })
+        .emit('test');
+    });
+
+    it('should call with options', function(done) {
+      var spy_callback = sinon.spy();
+
+      object
+        .within({
+          within: 200
+        , event: 'test'
+        , listener: spy
+        , callback: spy_callback
+        })
+        .emit('test');
+
+      expect(spy).have.been.calledOnce;
+
+      setTimeout(function() {
+        object.emit('test');
+        expect(spy).have.been.calledTwice;
+
+        setTimeout(function() {
+          object.emit('test');
+          expect(spy).have.been.calledTwice;
+          expect(spy_callback).have.been.calledOnce;
+          done();
+        }, 100);
+      }, 100);
+    });
   });
 
   describe('#reserve, #unreserve', function() {
