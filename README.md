@@ -310,6 +310,39 @@ ee.parallel('nyan', function(e) {
     listener 2
     listener 3
 
+#### ee.reserve(event) -> ee
+
+Reserve specified event.
+
+#### ee.unreserve(event) -> ee
+
+Cancel reservation of specified event.
+
+#### ee.lookup([pattern], [callback]) -> Array
+#### ee.lookup(pattern, callback, [return\_self]) -> Array | ee
+
+Lookup events match to the specified pattern.  
+when `return_self` is `true`, then return `ee`.
+
+```js
+ee.reserve('reserved')
+  .on('reserved', function() {})
+  .on('not reserved', function() {});
+
+console.log(ee.lookup());
+```
+
+    [ 'reserved', 'not reserved' ]
+
+```js
+ee.off('reserved')
+  .off('not reserved');
+
+console.log(ee.lookup());
+```
+
+    [ 'reserved' ]
+
 ### Ee.Event
 
 #### new Ee.Event(event)
