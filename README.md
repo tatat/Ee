@@ -50,18 +50,25 @@ ee.on('nyan', function(e) {
 
 `ee.Event === CustomEvent` is `true`
 
-#### ee.on(event, listener, [times], [first]) -> ee
+#### ee.on(event, listener, [times], [first], [until]) -> ee
 
 Adds a listener to the end of the listeners for the specified event.
 
-#### ee.first(event, listener, [times]) -> ee
+#### ee.first(event, listener, [times], [until]) -> ee
 
 Adds a listener to the beginning of the listeners for the specified event.
 
-#### ee.once(event, listener, [first]) -> ee
+#### ee.once(event, listener, [first], [until]) -> ee
 
 Adds a one time listener to the end of the listeners for the specified event.
 
+#### ee.until(until, event, listener, [times], [first]) -> ee
+
+Adds a listener will be removed when specified event is executed.
+
+#### ee.within(ms, event, listener, [times], [first], [until]) -> ee
+
+Adds a listener will be removed when specified time is reached.
 
 ```js
 ee.on('nyan', function(e) {
@@ -70,6 +77,10 @@ ee.on('nyan', function(e) {
   console.log('once nyan?');
 }).first('nyan', function(e) {
   console.log('first nyan');
+}).until('neko', 'nyan', function(e) {
+  console.log('until neko nyan');
+}).within(1000, 'nyan', function(e) {
+  console.log('within 1000ms nyan');
 });
 
 ee.on('neko', function(e) {
@@ -86,6 +97,8 @@ ee.emit('nyan');
     first nyan
     on nyan!
     once nyan?
+    until neko nyan
+    within 1000ms nyan
 
 ```js
 ee.emit('nyan');
@@ -93,12 +106,33 @@ ee.emit('nyan');
 
     first nyan
     on nyan!
+    until neko nyan
+    within 1000ms nyan
 
 ```js
 ee.emit('neko');
 ```
 
     true
+
+
+```js
+ee.emit('nyan');
+```
+
+    first nyan
+    on nyan!
+    within 1000ms nyan
+
+
+```js
+setTimeout(function() {
+  ee.emit('nyan');
+}, 2000);
+```
+
+    first nyan
+    on nyan!
 
 #### ee.off(event, [listener]) -> ee
 
