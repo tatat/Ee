@@ -3,6 +3,13 @@ Ee
 
 Event-Driven library inspired by the EventEmitter.
 
+Install
+--------------------
+
+```bash
+npm install ee
+```
+
 API
 --------------------
 
