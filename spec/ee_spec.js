@@ -91,6 +91,76 @@ describe('Ee', function() {
     });
   });
 
+  describe('#until', function() {
+    var object, spy1, spy2;
+
+    beforeEach(function() {
+      object = new Ee();
+      spy1 = sinon.spy();
+      spy2 = sinon.spy();
+    });
+
+    it('should remove listener when specified event is executed', function(done) {
+      object.until('nyan1', 'test1', spy1)
+        .until('nyan2', 'test2', spy2)
+        .on('nyan1', function(e) {
+          setTimeout(function() {
+            e.next();
+          }, 100);
+        })
+        .on('nyan2', function(e) {
+          e.done();
+        })
+        .emit('test1')
+        .emit('test2');
+
+      expect(spy1).have.been.calledOnce;
+      expect(spy2).have.been.calledOnce;
+
+      object.chain('nyan1', function(e) {
+          expect(spy1).have.been.calledOnce;
+          expect(spy2).have.been.calledTwice;
+
+          object.parallel('nyan2', function(e) {
+              expect(spy1).have.been.calledOnce;
+              expect(spy2).have.been.calledTwice;
+              done();
+            })
+            .emit('test1')
+            .emit('test2');
+        })
+        .emit('test1')
+        .emit('test2');
+    });
+  });
+
+  describe('#within', function() {
+    var object, spy;
+
+    beforeEach(function() {
+      object = new Ee();
+      spy = sinon.spy();
+    });
+
+    it('should remove listener when specified time is reached', function(done) {
+      object.within(200, 'test', spy)
+        .emit('test');
+
+      expect(spy).have.been.calledOnce;
+
+      setTimeout(function() {
+        object.emit('test');
+        expect(spy).have.been.calledTwice;
+
+        setTimeout(function() {
+          object.emit('test');
+          expect(spy).have.been.calledTwice;
+          done();
+        }, 100);
+      }, 100);
+    });
+  });
+
   describe('#off', function() {
     var object, spy1, spy2;
 
