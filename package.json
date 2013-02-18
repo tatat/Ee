@@ -1,6 +1,6 @@
 {
   "name": "ee",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Event-Driven library.",
   "keywords": [
     "event",
