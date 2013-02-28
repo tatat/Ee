@@ -1,5 +1,8 @@
 .DS_Store
 .git
+.bundle
 *.min.js
 *.log
-node_modules
+/.bundle
+/node_modules
+/vendor
