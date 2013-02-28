@@ -50,7 +50,7 @@ ee.on('nyan', function(e) {
 
 `ee.Event === CustomEvent` is `true`
 
-#### ee.on(event, listener, [times], [first], [until]) -> ee
+#### ee.on(event, listener, [times], [until], [first]) -> ee
 
 Adds a listener to the end of the listeners for the specified event.
 
@@ -64,7 +64,7 @@ Adds a listener to the end of the listeners for the specified event.
 
 Adds a listener to the beginning of the listeners for the specified event.
 
-#### ee.once(event, listener, [first], [until]) -> ee
+#### ee.once(event, listener, [until], [first]) -> ee
 
 Adds a one time listener to the end of the listeners for the specified event.
 
@@ -72,7 +72,41 @@ Adds a one time listener to the end of the listeners for the specified event.
 
 Adds a listener will be removed when specified event is executed.
 
-#### ee.within(within, event, listener, [callback], [times], [first], [until]) -> ee
+#### ee.until\_once(until, event, listener, [first]) -> ee
+
+Equals `ee.until(until, event, listener, 1, [first])`
+
+#### ee.until\_mutually(events, listener, [until], [times], [first])
+#### ee.until\_mutually(options)
+
+```js
+ee.until_mutually(['nyan1', 'nyan2', 'nyan3'], function() {}, ['nyan4']);
+```
+
+is equal to
+
+```js
+var listener = function() {};
+
+ee.until(['nyan2', 'nyan3', 'nyan4'], 'nyan1', listener)
+  .until(['nyan1', 'nyan3', 'nayn4'], 'nyan2', listener)
+  .until(['nyan1', 'nyan2', 'nayn4'], 'nyan3', listener);
+```
+
+`options` is Object has keys
+
+* `events`: array of string, event to listen and to remove. (required)
+* `listener`: function or array of function, listener. (required)
+* `until`: string or array of string, listener will be removed when this event is executed. (optional)
+* `times`: number, times to be executed. (optional)
+* `first`: boolean, add a listener to the beginning of the listeners. (optional)
+
+#### ee.until\_once\_mutually(events, listener, [until], [first])
+#### ee.until\_once\_mutually(options)
+
+Equals `ee.until_mutually(events, listener, [until], 1, [first])`
+
+#### ee.within(within, event, listener, [callback], [times], [until], [first]) -> ee
 #### ee.within(options) -> ee
 
 Adds a listener will be removed when specified time is reached.
@@ -86,6 +120,11 @@ Adds a listener will be removed when specified time is reached.
 * `times`: number, times to be executed. (optional)
 * `first`: boolean, add a listener to the beginning of the listeners. (optional)
 * `until`: string or array of string, listener will be removed when this event is executed. (optional)
+
+#### ee.within\_once(within, event, listener, [callback], [until], [first]) -> ee
+#### ee.within\_once(options) -> ee
+
+Equals `ee.within(within, event, listener, [callback], 1, [until], [first])`
 
 ```js
 ee.on('nyan', function(e) {
