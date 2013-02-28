@@ -211,6 +211,38 @@ describe('Ee', function() {
       expect(spy).to.have.been.calledTwice;
     });
 
+    it('should call on only one event (with additional param)', function() {
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_mutually({
+          event: events
+        , listener: spy
+        , until: ['test4']
+        })
+        .emit('test1')
+        .emit('event has not been set')
+        .emit('test1')
+        .emit('test4')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledTwice;
+
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_mutually(events, spy, 'test4')
+        .emit('test1')
+        .emit('event has not been listened')
+        .emit('test1')
+        .emit('test4')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledTwice;
+    });
+
     it('should call only once on only one event', function() {
       spy = sinon.spy(function(e) {
         expect(e.type).to.equal('test1');
@@ -222,6 +254,40 @@ describe('Ee', function() {
         .emit('test2')
         .emit('test1')
         .emit('test3')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledOnce;
+    });
+
+    it('should call only once on only one event (with additional param)', function() {
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_once_mutually({
+          event: events
+        , listener: spy
+        , until: ['test4']
+        })
+        .emit('test1')
+        .emit('test1')
+        .emit('event has not been listened')
+        .emit('test1')
+        .emit('test4')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledOnce;
+
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_once_mutually(events, spy, 'test4')
+        .emit('test1')
+        .emit('test1')
+        .emit('event has not been listened')
+        .emit('test1')
+        .emit('test4')
         .emit('test1');
 
       expect(spy).to.have.been.calledOnce;
