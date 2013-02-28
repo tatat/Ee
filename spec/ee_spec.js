@@ -91,7 +91,7 @@ describe('Ee', function() {
     });
   });
 
-  describe('#until', function() {
+  describe('#until, #until_once', function() {
     var object, spy1, spy2;
 
     beforeEach(function() {
@@ -131,6 +131,100 @@ describe('Ee', function() {
         })
         .emit('test1')
         .emit('test2');
+    });
+
+    it('should call only once', function() {
+      object.until_once('nyan1', 'test1', spy1);
+
+      object
+        .emit('test1')
+        .emit('test1');
+
+      expect(spy1).have.been.calledOnce;
+    });
+
+    it('should not call only once', function() {
+      object.until_once('nyan1', 'test1', spy1);
+
+      object
+        .emit('nyan1')
+        .emit('test1');
+
+      expect(spy1).have.not.been.called;
+    });
+  });
+
+  describe('#until_mutually, #until_once_mutually', function() {
+    var object, spy, events;
+
+    beforeEach(function() {
+      object = new Ee();
+      events = ['test1', 'test2', 'test3'];
+    });
+
+    it('should call on only one event', function() {
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_mutually(events, spy)
+        .emit('test1')
+        .emit('test2')
+        .emit('test3');
+
+      expect(spy).to.have.been.calledOnce;
+
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test2');
+      });
+
+      object.until_mutually(events, spy)
+        .emit('test2')
+        .emit('test3')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledOnce;
+
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test3');
+      });
+
+      object.until_mutually(events, spy)
+        .emit('test3')
+        .emit('test1')
+        .emit('test2');
+
+      expect(spy).to.have.been.calledOnce;
+
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_mutually(events, spy)
+        .emit('test1')
+        .emit('test1')
+        .emit('test2')
+        .emit('test1')
+        .emit('test3')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledTwice;
+    });
+
+    it('should call only once on only one event', function() {
+      spy = sinon.spy(function(e) {
+        expect(e.type).to.equal('test1');
+      });
+
+      object.until_once_mutually(events, spy)
+        .emit('test1')
+        .emit('test1')
+        .emit('test2')
+        .emit('test1')
+        .emit('test3')
+        .emit('test1');
+
+      expect(spy).to.have.been.calledOnce;
     });
   });
 
