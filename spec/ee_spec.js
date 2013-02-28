@@ -294,7 +294,7 @@ describe('Ee', function() {
     });
   });
 
-  describe('#within', function() {
+  describe('#within, #within_once', function() {
     var object, spy;
 
     beforeEach(function() {
@@ -352,6 +352,24 @@ describe('Ee', function() {
           object.emit('test');
           expect(spy).have.been.calledTwice;
           expect(spy_callback).have.been.calledOnce;
+          done();
+        }, 100);
+      }, 100);
+    });
+
+    it('should remove listener before specified time is reached', function(done) {
+      object.within_once(200, 'test', spy)
+        .emit('test');
+
+      expect(spy).have.been.calledOnce;
+
+      setTimeout(function() {
+        object.emit('test');
+        expect(spy).have.been.calledOnce;
+
+        setTimeout(function() {
+          object.emit('test');
+          expect(spy).have.been.calledOnce;
           done();
         }, 100);
       }, 100);
